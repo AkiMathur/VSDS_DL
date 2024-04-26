@@ -1,0 +1,73 @@
+    
+    confidence = st.sidebar.slider('Confidence', min_value =0.0,max_value = 1.0,value = 0.3)
+    video_file_buffer = st.sidebar.file_uploader("Upload a video", type=[ "mp4", "mov",'avi','asf', 'm4v' ],key=4)
+
+    tfflie = tempfile.NamedTemporaryFile(delete=False)
+
+    if not video_file_buffer:
+        vid = cv2.VideoCapture(DEMO_VIDEO)
+        tfflie.name = DEMO_VIDEO
+    
+    else:
+        tfflie.write(video_file_buffer.read())
+        vid = cv2.VideoCapture(tfflie.name)
+
+    
+
+    st.sidebar.text('Input Video')
+    st.sidebar.video(tfflie.name)
+
+    class_list = {2:'car',5:'bus', 7:'truck'}
+    #class_names = utils.read_class_names(cfg.YOLO.CLASSES)
+    custom_classes = st.sidebar.checkbox('Use Custom Classes')
+    if custom_classes:
+
+        assigned_class = st.sidebar.multiselect('Select The Custom Classes',list(class_list.values()),default='car')
+
+    st.markdown(' ## Output')
+    stop_button = st.sidebar.button('Stop Processing')
+    if stop_button:
+        st.stop()
+    stframe = st.empty()
+    save_video = st.button('Save Results')
+
+    #values 
+    width = int(vid.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(vid.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    fps = int(vid.get(cv2.CAP_PROP_FPS))
+    #codec = cv2.VideoWriter_fourcc(*FLAGS.output_format)
+    codec = cv2.VideoWriter_fourcc('V','P','0','9')
+    out = cv2.VideoWriter('output1.webm', codec, fps, (width, height))
+
+
+    harcascade = r"C:\Users\Akshit Mathur\Desktop\Deep Learning\haarcascade_russian_plate_number.xml"
+
+    cap = vid
+    min_area = 500
+    count = 0
+
+    while vid.isOpened():
+        success, img = cap.read()
+    
+        img = cv2.resize(img, None, fx=0.5, fy=0.5)
+        plate_cascade = cv2.CascadeClassifier(harcascade)
+        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        plates = plate_cascade.detectMultiScale(img_gray, 1.1, 4)
+
+        for (x,y,w,h) in plates:
+            area = w * h
+
+            if area > min_area:
+                cv2.rectangle(img, (x,y), (x+w, y+h), (0,255,0), 2)
+                cv2.putText(img, "Number Plate", (x,y-5), cv2.FONT_HERSHEY_COMPLEX_SMALL, 1, (255, 0, 255), 2)
+
+                img_roi = img[y: y+h, x:x+w]
+                #cv2.imshow("ROI", img_roi)
+
+        
+
+
+        
+        #cv2.imshow("Result", img)
+        stframe.image(img,use_column_width=True)
