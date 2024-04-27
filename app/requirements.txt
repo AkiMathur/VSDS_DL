@@ -5,5 +5,5 @@ opencv_python==4.9.0.80
 Pillow==10.3.0
 scikit_learn==1.2.1
 streamlit==1.24.0
-tensorflow==2.9.1
+tensorflow
 ultralytics==8.2.2
