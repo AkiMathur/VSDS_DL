@@ -13,8 +13,8 @@ from PIL import Image
 model=YOLO('yolov8s.pt')
 
 
-DEMO_VIDEO = r'C:\Users\Akshit Mathur\Desktop\Deep Learning\highway.mp4'
-DEMO_IMG = r'C:\Users\Akshit Mathur\Desktop\Deep Learning\detected_frames\50.jpg'
+DEMO_VIDEO = r'..\highway.mp4'
+#DEMO_IMG = r'C:\Users\Akshit Mathur\Desktop\Deep Learning\detected_frames\50.jpg'
 
 def main():
     st.title('Custom Object Detection using Streamlit')
