@@ -26,7 +26,7 @@ def main():
 
     if option == "Vehicle Count":
         st.write('You selected:', option)
-        
+
         video_file_buffer = st.sidebar.file_uploader("Upload a video", type=[ "mp4", "mov",'avi','asf', 'm4v' ],key=0)
 
         tfflie = tempfile.NamedTemporaryFile(delete=False)
@@ -39,11 +39,20 @@ def main():
             tfflie.write(video_file_buffer.read())
             vid = cv2.VideoCapture(tfflie.name)
 
-        ret, frame = vid.read()
-        sample = st.sidebar.number_input("Red Line Y-axis:",min_value=0,max_value=500)
         
+
         st.sidebar.text('Input Video')
         st.sidebar.video(tfflie.name)
+
+        custom_lines = st.sidebar.checkbox('Use Custom lines')
+        if custom_lines:
+
+            red_y = st.sidebar.number_input("Red Line Y-axis:",min_value=0,max_value=500,value=198)
+            red_x1 = st.sidebar.number_input("Red Line X1:",min_value=0,max_value=1020,value=172)
+            red_x2 = st.sidebar.number_input("Red Line X2:",min_value=0,max_value=1020,value=774)
+            blue_y = st.sidebar.number_input("Blue Line Y-axis:",min_value=0,max_value=500,value=268)
+            blue_x1 = st.sidebar.number_input("Blue Line X1:",min_value=0,max_value=1020,value=8)
+            blue_x2 = st.sidebar.number_input("Blue Line X2:",min_value=0,max_value=1020,value=927)
 
         class_list = {2:'car',5:'bus', 7:'truck'}
         #class_names = utils.read_class_names(cfg.YOLO.CLASSES)
@@ -67,7 +76,7 @@ def main():
         codec = cv2.VideoWriter_fourcc('V','P','0','9')
         out = cv2.VideoWriter('output1.webm', codec, fps, (width, height))
 
-
+        
         tracker=utilsss.Tracker()
         count=utilsss.i_m_speed("count")
         cap=vid
@@ -76,9 +85,23 @@ def main():
         counter_down = utilsss.i_m_speed("counter_down")
         counter_up = utilsss.i_m_speed("counter_up")
 
-        red_line_y = 198
-        blue_line_y = 268
+        
         offset = 6
+
+        if custom_lines:
+            red_line_y = red_y
+            blue_line_y = blue_y
+            rx1 = red_x1
+            rx2 = red_x2
+            bx1 = blue_x1
+            bx2 = blue_x2
+        else:
+            red_line_y = 198
+            blue_line_y = 268
+            rx1 = 172
+            rx2 = 774
+            bx1 = 8
+            bx2 = 927
 
         while vid.isOpened():
             ret, frame = cap.read()
@@ -119,17 +142,9 @@ def main():
                         elapsed_time=time.time() - down[id]  # current time when vehicle touch the second line. Also we a re minusing the previous time ( current time of line 1)
                         if counter_down.count(id)==0:
                             counter_down.append(id)
-                            distance = 10 # meters 
-                            a_speed_ms = distance / elapsed_time
-                            a_speed_kh = a_speed_ms * 36  # this will give kilometers per hour for each vehicle. This is the condition for going downside
                             cv2.circle(frame,(cx,cy),4,(0,0,255),-1)
                             cv2.rectangle(frame, (x3, y3), (x4, y4), (0, 255, 0), 2)  # Draw bounding box
-                            #crop_img = frame[y3:y4, x3:x4]
-                            ##crop_img = cv2.resize(crop_img, (800, 800))
-                            #frame_filename = f'detected_frames/{count}.jpg'
-                            #cv2.imwrite(frame_filename, crop_img)
                             cv2.putText(frame,str(id),(x3,y3),cv2.FONT_HERSHEY_COMPLEX,0.6,(255,255,255),1)
-                            #cv2.putText(frame,str(int(a_speed_kh))+'Km/h',(x4,y4 ),cv2.FONT_HERSHEY_COMPLEX,0.8,(0,255,255),2)
                     
 
                     
@@ -143,14 +158,9 @@ def main():
                         # formula of speed= distance/time 
                         if counter_up.count(id)==0:
                             counter_up.append(id)      
-                            distance1 = 10 # meters  (Distance between the 2 lines is 10 meters )
-                            a_speed_ms1 = distance1 / elapsed1_time
-                            a_speed_kh1 = a_speed_ms1 * 36
                             cv2.circle(frame,(cx,cy),4,(0,0,255),-1)
                             cv2.rectangle(frame, (x3, y3), (x4, y4), (0, 255, 0), 2)  # Draw bounding box
                             cv2.putText(frame,str(id),(x3,y3),cv2.FONT_HERSHEY_COMPLEX,0.6,(255,255,255),1)
-                            #cv2.putText(frame,str(int(a_speed_kh1))+'Km/h',(x4,y4),cv2.FONT_HERSHEY_COMPLEX,0.8,(0,255,255),2)
-
 
 
         
@@ -161,10 +171,10 @@ def main():
 
             cv2.rectangle(frame, (0, 0), (250, 90), yellow_color, -1)
 
-            cv2.line(frame, (172, 198), (774, 198), red_color, 2)
+            cv2.line(frame, (rx1, red_line_y), (rx2, red_line_y), red_color, 2)
             cv2.putText(frame, ('Red Line'), (172, 198), cv2.FONT_HERSHEY_SIMPLEX, 0.5, text_color, 1, cv2.LINE_AA)
 
-            cv2.line(frame, (8, 268), (927, 268), blue_color, 2)
+            cv2.line(frame, (bx1, blue_line_y), (bx2, blue_line_y), blue_color, 2)
             cv2.putText(frame, ('Blue Line'), (8, 268), cv2.FONT_HERSHEY_SIMPLEX, 0.5, text_color, 1, cv2.LINE_AA)
 
             cv2.putText(frame, ('Going Down - ' + str(len(counter_down))), (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.5, text_color, 1, cv2.LINE_AA)
