@@ -9,10 +9,7 @@ import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
 from sklearn.metrics import f1_score 
-from keras import optimizers
-from keras import Sequential
-from keras.preprocessing.image import ImageDataGenerator
-from keras.layers import Dense, Flatten, MaxPooling2D, Dropout, Conv2D
+
 model=YOLO('yolov8s.pt')
 
 class_list = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat',
