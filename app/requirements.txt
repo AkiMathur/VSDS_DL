@@ -1,4 +1,4 @@
-keras==2.9.0
+keras
 numpy==1.25.2
 opencv_python==4.9.0.80
 Pillow==10.3.0
