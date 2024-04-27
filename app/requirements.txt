@@ -1,6 +1,6 @@
 keras
 numpy==1.25.2
-opencv-python-headless
+opencv_python_headless==4.5.2.54
 Pillow==10.3.0
 scikit_learn==1.2.1
 streamlit
