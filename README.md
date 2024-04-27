@@ -1,1 +1,0 @@
-## Vehicle Speed Detection System
