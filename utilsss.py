@@ -2,15 +2,7 @@ import torch
 from ultralytics.nn.tasks import DetectionModel
 from ultralytics.nn.modules import Conv, C2f, Bottleneck, SPPF
 from torch.nn.modules.container import Sequential
-
-torch.serialization.add_safe_globals([
-    DetectionModel,
-    Conv,
-    C2f,
-    Bottleneck,
-    SPPF,
-    Sequential
-])
+from ultralytics import YOLO  # Must come after registration
 
 import cv2
 import math
@@ -18,13 +10,14 @@ import time
 import numpy as np
 import os
 import matplotlib.pyplot as plt
-from ultralytics import YOLO
 import pandas as pd
 import tensorflow as tf
 from tensorflow import keras
-from sklearn.metrics import f1_score 
+from sklearn.metrics import f1_score
 
-model=YOLO('yolov8s.pt')
+# ✅ Wrap model loading in context manager
+with torch.serialization.safe_globals([DetectionModel, Conv, C2f, Bottleneck, SPPF, Sequential]):
+    model = YOLO('yolov8s.pt')
 
 class_list = ['person', 'bicycle', 'car', 'motorcycle', 'airplane', 'bus', 'train', 'truck', 'boat',
                'traffic light', 'fire hydrant', 'stop sign', 'parking meter', 'bench', 'bird', 'cat', 'dog',
