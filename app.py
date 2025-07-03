@@ -7,8 +7,8 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 
+import torch
 from ultralytics.nn.tasks import DetectionModel
-
 torch.serialization.add_safe_globals([DetectionModel])
 
 from ultralytics import YOLO
