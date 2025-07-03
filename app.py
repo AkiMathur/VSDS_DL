@@ -9,15 +9,16 @@ import matplotlib.pyplot as plt
 
 import torch
 from ultralytics.nn.tasks import DetectionModel
-from torch.nn.modules.container import Sequential
 from ultralytics.nn.modules import Conv, C2f, Bottleneck, SPPF
+from torch.nn.modules.container import Sequential
+
 torch.serialization.add_safe_globals([
     DetectionModel,
-    Sequential,
     Conv,
     C2f,
     Bottleneck,
-    SPPF
+    SPPF,
+    Sequential
 ])
 
 from ultralytics import YOLO
