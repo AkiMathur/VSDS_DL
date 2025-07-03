@@ -7,25 +7,13 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 
-import torch
-from ultralytics.nn.tasks import DetectionModel
-from ultralytics.nn.modules import Conv, C2f, Bottleneck, SPPF
-from torch.nn.modules.container import Sequential
-
-torch.serialization.add_safe_globals([
-    DetectionModel,
-    Conv,
-    C2f,
-    Bottleneck,
-    SPPF,
-    Sequential
-])
-
 from ultralytics import YOLO
 import pandas as pd
-import utilsss
 from PIL import Image
-model=YOLO('yolov8s.pt')
+import utilsss  # Must come AFTER safe_globals registered inside
+
+# Load model safely now
+model = utilsss.load_model()
 
  
 DEMO_VIDEO = os.path.join('highway.mp4')
