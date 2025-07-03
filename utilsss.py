@@ -1,3 +1,17 @@
+import torch
+from ultralytics.nn.tasks import DetectionModel
+from ultralytics.nn.modules import Conv, C2f, Bottleneck, SPPF
+from torch.nn.modules.container import Sequential
+
+torch.serialization.add_safe_globals([
+    DetectionModel,
+    Conv,
+    C2f,
+    Bottleneck,
+    SPPF,
+    Sequential
+])
+
 import cv2
 import math
 import time
